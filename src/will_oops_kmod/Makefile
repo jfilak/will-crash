@@ -1,8 +1,8 @@
 obj-m := will_oops.o
-KERNELDIR := /lib/modules/$(shell uname -r)/build
+KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 
-all:
+all: $(KERNELDIR)
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
 
 clean:

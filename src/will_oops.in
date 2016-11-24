@@ -3,10 +3,23 @@
 # exit on any failure
 set -e
 
-if [ ! -d "/lib/modules/`uname -r`/build" ]; then
-    echo "Kernel build tree not found"
-    echo "Please install the kernel-devel package"
-    exit 1
+KERNELBUILDDIR=${1:-}
+
+if [ -z "$KERNELBUILDDIR" ]; then
+    LATESTKERNELDIR="/lib/modules/`uname -r`/build"
+    RUNNINGKERNELDIR="/usr/src/kernels/`uname -r`/"
+    for KD in $LATESTKERNELDIR $RUNNINGKERNELDIR; do
+        if [ -d $KD ]; then
+            KERNELBUILDDIR=$KD
+            break
+        fi
+    done
+
+    if [ -z "$KERNELBUILDDIR" ]; then
+        echo "Kernel build tree not found"
+        echo "Please install the kernel-devel-`uname -r` package"
+        exit 1
+    fi
 fi
 
 # look in the current directory first
@@ -22,7 +35,7 @@ cd $TMPDIR
 cp $SRCDIR/{will_oops.c,Makefile} .
 
 echo "Building kernel module ..."
-make
+make KERNELDIR=$KERNELBUILDDIR
 
 echo "Loading the module ..."
 insmod will_oops.ko

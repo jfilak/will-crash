@@ -23,6 +23,10 @@ Requires:       jpackage-utils
 Requires:       java-headless >= 1.7.0.0
 Requires:       javapackages-tools
 %endif
+# will_oops dependencies
+Requires:       gcc
+Requires:       kmod
+Container:      docker
 
 # Don't require python3 for el6/el7, exclude ppc64 due to missing java
 %if 0%{?rhel}
